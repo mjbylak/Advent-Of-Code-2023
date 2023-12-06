@@ -2,18 +2,28 @@ import fileinput
 import string
 from pprint import pprint
 import sys
-import threading
+import multiprocessing
+import concurrent.futures
 
 # Global Variable Declaration
 almanac = []
 debug = False
+lowest_from_thread = 0
 
-def my_thread():
+nums_per_thread = 10000
 
+def my_thread(i):    
+    print(i)
+    i = find_location(i)
+    return i
+
+    # for i in range (1000):
+    #     return_value = find_location(pair[i])
+        
 
 def find_location(seed):
     seed_value = int(seed)
-    print(f"Checking value {seed}")
+    if debug: print(f"Checking value {seed}")
 
     converted = False
 
@@ -74,34 +84,43 @@ def main():
                 almanac.append(rows)    
 
     # Call method for finding final seed locations
-    lowest_location = 99999999999
     pairs = []
+    lowest_location = 9999999999999
 
-    for index, seed in enumerate(seed_list):
-        if index == 0: continue
-        pairs.append(int(seed))
-        if (index-1) % 2:
-            if (pairs[0] > pairs[1]):
-                temp = pairs[1]
-                pairs[1] = pairs[0]
-                pairs[0] = temp
-            print(f"Inputting seed: {pairs[0]} to {pairs[1]}")
-            for i in range (pairs[0], pairs[1]):
-                # ADDING MULTITHREADING
-                try:
-                    x = threading.Thread(target=my_thread, args= (pairs[0], pairs[1]),daemon=True)
-                    threads += 1    #thread counter
-                    x.start()       #start each thread
-                except RuntimeError:    #too many throws a RuntimeError
-                    break
-                if lowest_location > int(find_location(i)):
-                    lowest_location = find_location(i)
-                    print("\nFound lowest location of " + str(lowest_location))
-            pairs.clear()
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+
+        for index, seed in enumerate(seed_list):
+            if index == 0: continue
+            pairs.append(int(seed))
+            if (index - 1) % 2:
+                print(f"Inputting seed: {pairs[0]} to {int(pairs[0])+int(pairs[1])}")
+
+
+                for index in range(pairs[1]):
+                    i = index+pairs[0]
+  
+                    futures.append(executor.submit(my_thread, i))
+
+                    for future in concurrent.futures.as_completed(futures):
+                        return_value = future.result()
+                        if lowest_location > return_value:
+                            lowest_location = return_value
+                            print("\nFound lowest location of " + str(lowest_location))
+                        futures = []
+
+                pairs.clear()
+
+            if index > 3: break
+
+        # Wait for remaining threads to finish
+        for future in concurrent.futures.as_completed(futures):
+            return_value = future.result()
+            if lowest_location > return_value:
+                lowest_location = return_value
+                print("\nFound lowest location of " + str(lowest_location))
 
     print("\nLowest location value found is " + str(lowest_location))
-
-    pass
 
 if __name__ == "__main__":
     main()

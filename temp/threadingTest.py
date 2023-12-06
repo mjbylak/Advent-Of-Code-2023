@@ -7,7 +7,7 @@ def mythread():
 
 def main():
     threads = 0     #thread counter
-    y = 100000     #a MILLION of 'em!
+    y = 1000000     #a MILLION of 'em!
     for i in range(y):
         try:
             x = threading.Thread(target=mythread, daemon=True)
