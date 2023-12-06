@@ -42,7 +42,7 @@ def find_all_wins(input):
 
 
 def main():
-    file_name = "Day-6\\Day6Cal.txt"
+    file_name = "Day-6\\Day6.txt"
     
     input = []
 
