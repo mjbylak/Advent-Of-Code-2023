@@ -11,7 +11,7 @@ almanac = []
 global debug
 debug = False
 lowest_from_thread = 0
-chunk_size = 1000000
+chunk_size = 100000
        
 
 def find_location(seed,almanac):
@@ -59,7 +59,7 @@ def process_chunk(chunk,almanac):
     return results
 
 def main():
-    file_name = "Day-5\\Day5.txt"
+    file_name = "Day-5\\Day5Cal.txt"
     # almanac = []
     
     # Handling the first line (seeds)
