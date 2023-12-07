@@ -1,10 +1,12 @@
 import concurrent.futures
+from pprint import pprint
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 
 # Global Variable Declaration
 almanac = []
 total_iterations = 0
 chunk_size = 1000000
+simplify_factor = 10000
        
 def find_location(seed):
     seed_value = int(seed)
@@ -33,7 +35,7 @@ def find_location(seed):
 
 
 def main():
-    file_name = "Day-5\\Day5.txt"
+    file_name = "Day-5/Day5.txt"
     
     # Creating the seed list to read from
     seed_list = {}
@@ -44,18 +46,17 @@ def main():
     with open(file_name, "r") as file:
         for line in file:
             if first_line:
-                rows = [int(x) if x.isdigit() else x for x in line.split()]
+                rows = [int(x)/simplify_factor if x.isdigit() else x for x in line.split()]
                 seed_list = rows
                 first_line = False
             else:
-                rows = [int(x) if x.isdigit() else x for x in line.split()]
+                rows = [int(x)/simplify_factor if x.isdigit() else x for x in line.split()]
                 almanac.append(rows)    
 
     # Call method for finding final seed locations
     pairs = []
     lowest_location = 9999999999999
 
-    futures = []
 
     for index, seed in enumerate(seed_list):
         if index == 0: continue
@@ -68,8 +69,6 @@ def main():
                     print(lowest_location)
 
             pairs.clear()
-
-    
 
 
 if __name__ == "__main__":
