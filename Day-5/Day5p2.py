@@ -3,9 +3,10 @@ from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 
 # Global Variable Declaration
 almanac = []
+total_iterations = 0
 chunk_size = 1000000
        
-def find_location(seed,almanac):
+def find_location(seed):
     seed_value = int(seed)
 
     converted = False
@@ -28,17 +29,6 @@ def find_location(seed,almanac):
                 converted = True
 
     return seed_value
-
-
-
-def process_chunk(chunk,almanac):
-    results = []
-
-    for i in chunk:
-        result = find_location(i,almanac)
-        results.append(result)
-
-    return results
 
 
 
@@ -65,41 +55,22 @@ def main():
     pairs = []
     lowest_location = 9999999999999
 
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        futures = []
+    futures = []
 
-        for index, seed in enumerate(seed_list):
-            if index == 0: continue
-            pairs.append(int(seed))
-            if (index - 1) % 2:
-                total_iterations = pairs[1]
+    for index, seed in enumerate(seed_list):
+        if index == 0: continue
+        pairs.append(int(seed))
+        if (index - 1) % 2:
+            for i in range(pairs[0],pairs[0]+pairs[1]):
+                result = find_location(i)
+                if lowest_location > result:
+                    lowest_location = result
+                    print(lowest_location)
 
-                num_chunks = (total_iterations + chunk_size - 1) // chunk_size
+            pairs.clear()
 
-                for chunk_num in range(num_chunks):
-                    start = chunk_num * chunk_size + pairs[0]
-                    end = min((chunk_num + 1) * chunk_size + pairs[0], pairs[0]+total_iterations)
+    
 
-                    chunk = range(start, end+1)
-                    futures.append(executor.submit(process_chunk, chunk, almanac.copy()))
-
-
-                for future in concurrent.futures.as_completed(futures):
-                    results = future.result()
-                    for result in results:
-                        if lowest_location > result:
-                            lowest_location = result
-
-                pairs.clear()
-
-    # Wait for remaining processes to finish
-    for future in concurrent.futures.as_completed(futures):
-        results = future.result()
-        for result in results:
-            if lowest_location > result:
-                lowest_location = result
-
-    print(lowest_location)
 
 if __name__ == "__main__":
     main()
