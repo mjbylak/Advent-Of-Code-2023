@@ -1,20 +1,36 @@
 from pprint import pprint
 import numpy as np
 
+def print_column(map,j):
+    for i in range(len(map)):
+        print(map[i][j],end=" ")
+    print()
+
 def expand_universe(map):
-    for row in map:
-        galaxy_found = False
-        for i in row:
-            if i == '#':
-                print(f"Found galaxy at {row.index(i)+1} in {row}")
-                galaxy_found = True
-                break
-        if not galaxy_found: print(f"Row {row} has no galaxies :(")
     
-    for col in range(len(map[0])):
-        for row in map:
-            print(row[col], end=" ")
-        print()
+    # for row in map:
+    #     galaxy_found = False
+    #     for i in row:
+    #         if i == '#':
+    #             print(f"Found galaxy at {row.index(i)+1} in {row}")
+    #             galaxy_found = True
+    #             break
+    #     if not galaxy_found: print(f"Row {row} has no galaxies :(")
+    
+    print("\n\n\nStarting Column Mapping")
+
+    # Thinking conceptually, just use the simple 
+
+    # column index is j
+    for j in range(len(map[0])):
+        galaxy_found = False
+        for i in range(len(map)):
+            if map[i][j] == '#':
+                galaxy_found = True
+                print(print_column(map,j),f"Column {j+1} has a galaxy :(")
+                break
+        # if not galaxy_found: print(f"Column {print_column(map,j)} has no galaxies :(")
+        
         
             
     
